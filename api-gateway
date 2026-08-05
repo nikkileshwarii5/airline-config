@@ -4,6 +4,13 @@
 server.port=5000
 
 # ==========================================
+# Redis Configuration
+# ==========================================
+spring.data.redis.host=${SPRING_DATA_REDIS_HOST:localhost}
+spring.data.redis.port=${SPRING_DATA_REDIS_PORT:6379}
+spring.data.redis.timeout=2000ms
+
+# ==========================================
 # Spring Cloud Gateway - Global CORS
 # ==========================================
 spring.cloud.gateway.globalcors.add-to-simple-url-handler-mapping=true
@@ -25,3 +32,71 @@ spring.cloud.gateway.globalcors.cors-configurations.[/**].allow-credentials=true
 # Gateway Default Filters
 # ==========================================
 spring.cloud.gateway.default-filters[0]=DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+# ==========================================
+# Resilience4j Time Limiter
+# ==========================================
+resilience4j.timelimiter.configs.default.timeout-duration=5s
+resilience4j.timelimiter.configs.default.cancel-running-future=true
+
+resilience4j.timelimiter.instances.booking-service-cb.timeout-duration=8s
+resilience4j.timelimiter.instances.payment-service-cb.timeout-duration=10s
+
+# ==========================================
+# Resilience4j Circuit Breaker
+# ==========================================
+resilience4j.circuitbreaker.configs.gateway-default.sliding-window-size=10
+resilience4j.circuitbreaker.configs.gateway-default.minimum-number-of-calls=5
+resilience4j.circuitbreaker.configs.gateway-default.failure-rate-threshold=50
+resilience4j.circuitbreaker.configs.gateway-default.wait-duration-in-open-state=30s
+resilience4j.circuitbreaker.configs.gateway-default.permitted-number-of-calls-in-half-open-state=3
+resilience4j.circuitbreaker.configs.gateway-default.automatic-transition-from-open-to-half-open-enabled=true
+resilience4j.circuitbreaker.configs.gateway-default.register-health-indicator=true
+
+resilience4j.circuitbreaker.instances.booking-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.booking-service-cb.failure-rate-threshold=40
+resilience4j.circuitbreaker.instances.booking-service-cb.wait-duration-in-open-state=45s
+
+resilience4j.circuitbreaker.instances.payment-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.payment-service-cb.failure-rate-threshold=30
+resilience4j.circuitbreaker.instances.payment-service-cb.wait-duration-in-open-state=60s
+
+resilience4j.circuitbreaker.instances.flight-ops-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.seat-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.pricing-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.ancillary-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.location-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.airline-core-service-cb.base-config=gateway-default
+resilience4j.circuitbreaker.instances.user-service-cb.base-config=gateway-default
+
+# ==========================================
+# Eureka Client
+# ==========================================
+eureka.instance.prefer-ip-address=true
+eureka.instance.instance-id=${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+
+# ==========================================
+# Application Information
+# ==========================================
+info.app.name=api-gateway
+info.app.description=API Gateway - routes and load balances all incoming requests across microservices
+info.app.version=1.0.0
+info.app.environment=development
+
+# ==========================================
+# Actuator
+# ==========================================
+management.endpoints.web.exposure.include=health,info,circuitbreakers,circuitbreakerevents
+
+management.endpoint.health.show-details=always
+management.endpoint.info.enabled=true
+
+management.info.env.enabled=true
+management.info.java.enabled=true
+management.info.os.enabled=true
+
+management.health.circuitbreakers.enabled=true
