@@ -1,0 +1,27 @@
+# ==========================================
+# Server Configuration
+# ==========================================
+server.port=5000
+
+# ==========================================
+# Spring Cloud Gateway - Global CORS
+# ==========================================
+spring.cloud.gateway.globalcors.add-to-simple-url-handler-mapping=true
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-origin-patterns[0]=https://*.vercel.app
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-origin-patterns[1]=http://localhost:*
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods[0]=GET
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods[1]=POST
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods[2]=PUT
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods[3]=DELETE
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods[4]=OPTIONS
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-headers[0]=*
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allow-credentials=true
+
+# ==========================================
+# Gateway Default Filters
+# ==========================================
+spring.cloud.gateway.default-filters[0]=DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
